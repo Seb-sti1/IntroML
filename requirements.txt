@@ -1,0 +1,9 @@
+dtuimldmtools
+ucimlrepo
+matplotlib
+numpy
+pandas
+tqdm
+scipy
+scikit-learn
+torch
