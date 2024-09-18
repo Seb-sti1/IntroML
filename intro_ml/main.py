@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 from scipy.linalg import svd
 
 from intro_ml.load_data import get_data
-from intro_ml.plot import scatter_by_class, plot_pca_variance
+from intro_ml.plot import scatter_by_class, plot_pca_variance, histplot, boxplot, corr_matrix
 
 if __name__ == '__main__':
     wine_data = get_data()
