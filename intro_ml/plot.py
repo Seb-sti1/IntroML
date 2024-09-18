@@ -35,6 +35,7 @@ def boxplot(wine_data):
     axes = fig.add_subplot(111)
     normalized.plot.box(ax=axes)
     plt.xticks(rotation=90)
+    plt.ylabel("Normalized value between 0 and 1")
     fig.tight_layout()
     plt.show()
 
