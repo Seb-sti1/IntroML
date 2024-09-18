@@ -1,4 +1,4 @@
-import numpy as np
+import seaborn as sb
 from matplotlib import pyplot as plt
 
 
@@ -19,18 +19,11 @@ def scatter_by_class(wine_data, x_axis_column, y_axis_column, group_column="clas
 
 
 def corr_matrix(wine_data):
-    # TODO add number on the plot
-    corr = wine_data.corr()
-    figure = plt.figure(figsize=(10, 8))
-    axes = figure.add_subplot(111)
-    caxes = axes.matshow(corr, )
-    figure.colorbar(caxes)
-    plt.xticks(rotation=90)
-    axes.set_xticks(np.arange(len(wine_data.columns)))
-    axes.set_yticks(np.arange(len(wine_data.columns)))
-    axes.set_xticklabels(list(wine_data.columns))
-    axes.set_yticklabels(list(wine_data.columns))
-    figure.tight_layout()
+    data = wine_data.drop("class", axis=1)
+    corr = data.corr()
+    fig = plt.figure(figsize=(10, 8))
+    sb.heatmap(corr, cmap='Blues', annot=True, fmt='.1f')
+    fig.tight_layout()
     plt.show()
 
 
@@ -47,8 +40,17 @@ def boxplot(wine_data):
 
 
 def histplot(wine_data):
-    # TODO add lines
-    wine_data_no_class = wine_data.drop("class", axis=1)
-    wine_data_no_class.hist(bins=30, figsize=(10, 10), layout=(5, 3))
+    data = wine_data.drop("class", axis=1)
+    fig = plt.figure(figsize=(8, 10))
+    axes = fig.subplots(nrows=7, ncols=2).flatten()
+
+    for ax, col in zip(axes[:len(data.columns)], data.columns):
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        sb.histplot(data[col], bins=25, ax=ax, kde=True, edgecolor=None)
+
+    for ax in axes[len(data.columns):]:
+        ax.set_visible(False)
+
     plt.tight_layout()
     plt.show()
