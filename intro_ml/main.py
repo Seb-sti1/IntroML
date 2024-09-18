@@ -3,13 +3,14 @@ from matplotlib import pyplot as plt
 from scipy.linalg import svd
 
 from intro_ml.load_data import get_data
-from intro_ml.plot import boxplot, histplot, corr_matrix
+from intro_ml.plot import histplot, corr_matrix, boxplot
 
 
 def pca():
     wine_data_no_class = wine_data.drop("class", axis=1)
-    wine_data_np = wine_data_no_class.to_numpy()
-    Y = wine_data_np - np.ones((wine_data_np.shape[0], 1)) * wine_data_np.mean(axis=0)
+    wine_data_s = wine_data_no_class / wine_data_no_class.max()
+    wine_data_m = wine_data_s - wine_data_s.mean()
+    Y = wine_data_m.to_numpy()
 
     # PCA by computing SVD of Y
     U, S, V = svd(Y, full_matrices=False)
@@ -20,7 +21,10 @@ def pca():
     threshold = 0.9
 
     # Plot variance explained
-    plt.figure()
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
     plt.plot(range(1, len(rho) + 1), rho, "x-")
     plt.plot(range(1, len(rho) + 1), np.cumsum(rho), "o-")
     plt.plot([1, len(rho)], [threshold, threshold], "k--")
