@@ -27,7 +27,7 @@ if __name__ == '__main__':
     fig = plt.figure(figsize=(10, 8))
     sb.heatmap(Vh, yticklabels=wine_data_no_class.columns,
                xticklabels=[f"PCA {i + 1}" for i in range(Vh.shape[0])],
-               cmap='Blues', annot=True, fmt='.2f')
+               cmap='PRGn', annot=True, fmt='.2f')
     fig.tight_layout()
     plt.show()
 
