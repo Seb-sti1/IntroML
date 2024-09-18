@@ -1,3 +1,4 @@
+import numpy as np
 import seaborn as sb
 from matplotlib import pyplot as plt
 
@@ -54,4 +55,26 @@ def histplot(wine_data):
         ax.set_visible(False)
 
     plt.tight_layout()
+    plt.show()
+
+
+def plot_pca_variance(S):
+    # Compute variance explained by principal components
+    rho = (S * S) / (S * S).sum()
+
+    threshold = 0.9
+
+    # Plot variance explained
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    plt.plot(range(1, len(rho) + 1), rho, "x-")
+    plt.plot(range(1, len(rho) + 1), np.cumsum(rho), "o-")
+    plt.plot([1, len(rho)], [threshold, threshold], "k--")
+    # plt.title("Variance explained by principal components")
+    plt.xlabel("Principal component")
+    plt.ylabel("Variance explained")
+    plt.legend(["Individual", "Cumulative", "Threshold"])
+    plt.grid()
     plt.show()
