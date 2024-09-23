@@ -163,3 +163,4 @@ cython_debug/
 
 exercices/
 wine.csv
+ouputs/*.png
