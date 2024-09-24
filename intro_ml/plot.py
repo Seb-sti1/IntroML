@@ -45,16 +45,17 @@ def boxplot(wine_data):
 
 
 def histplot(wine_data):
-    data = wine_data.drop("class", axis=1)
-    fig = plt.figure(figsize=(8, 10))
-    axes = fig.subplots(nrows=7, ncols=2).flatten()
+    normalized = wine_data / wine_data.max(axis=0)
+    normalized = normalized.drop("class", axis=1)
+    fig = plt.figure(figsize=(14, 8))
+    axes = fig.subplots(nrows=4, ncols=4).flatten()
 
-    for ax, col in zip(axes[:len(data.columns)], data.columns):
+    for ax, col in zip(axes[:len(normalized.columns)], normalized.columns):
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
-        sb.histplot(data[col], bins=25, ax=ax, kde=True, edgecolor=None)
+        sb.histplot(normalized[col], bins=25, ax=ax, kde=True, edgecolor=None)
 
-    for ax in axes[len(data.columns):]:
+    for ax in axes[len(normalized.columns):]:
         ax.set_visible(False)
 
     plt.tight_layout()
@@ -80,4 +81,23 @@ def plot_pca_variance(S):
     plt.ylabel("Variance explained")
     plt.legend(["Individual", "Cumulative", "Threshold"])
     plt.grid()
+    plt.show()
+
+
+def plot_Vh(Vh, columns):
+    fig = plt.figure(figsize=(10, 8))
+    sb.heatmap(Vh, yticklabels=columns,
+               xticklabels=[f"PCA {i + 1}" for i in range(Vh.shape[0])],
+               cmap='PRGn', annot=True, fmt='.2f',
+               vmin=-.85, vmax=.85)
+    fig.tight_layout()
+    plt.show()
+
+
+def pairplot(data):
+    sb.pairplot(data,
+                hue="class",
+                palette="Set1",
+                diag_kind="hist",
+                corner=True)
     plt.show()
