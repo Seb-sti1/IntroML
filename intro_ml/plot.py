@@ -36,9 +36,11 @@ def boxplot(wine_data):
     normalized = normalized.drop("class", axis=1)
 
     fig = plt.figure(figsize=(10, 8))
-    axes = fig.add_subplot(111)
-    normalized.plot.box(ax=axes)
+    ax = fig.add_subplot(111)
+    normalized.plot.box(ax=ax)
     plt.xticks(rotation=90)
+    plt.setp(ax.get_xticklabels(), fontsize=14)
+    ax.set_ylabel(ax.get_ylabel(), fontsize=14)  # Set y-axis label size
     plt.ylabel("Normalized value between 0 and 1")
     fig.tight_layout()
     plt.show()
@@ -54,6 +56,8 @@ def histplot(wine_data):
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         sb.histplot(normalized[col], bins=25, ax=ax, kde=True, edgecolor=None)
+        ax.set_xlabel(ax.get_xlabel(), fontsize=14)  # Set x-axis label size
+        ax.set_ylabel(ax.get_ylabel(), fontsize=14)  # Set y-axis label size
 
     for ax in axes[len(normalized.columns):]:
         ax.set_visible(False)
@@ -85,19 +89,45 @@ def plot_pca_variance(S):
 
 
 def plot_Vh(Vh, columns):
-    fig = plt.figure(figsize=(10, 8))
-    sb.heatmap(Vh, yticklabels=columns,
-               xticklabels=[f"PCA {i + 1}" for i in range(Vh.shape[0])],
-               cmap='PRGn', annot=True, fmt='.2f',
-               vmin=-.85, vmax=.85)
+    fig = plt.figure(figsize=(12, 8))
+    g = sb.heatmap(Vh, yticklabels=columns,
+                   xticklabels=[f"PCA {i + 1}" for i in range(Vh.shape[0])],
+                   cmap='PRGn', annot=True, fmt='.2f',
+                   vmin=-.85, vmax=.85)
+    ax = g.axes
+    plt.setp(ax.get_xticklabels(), fontsize=15)
+    plt.setp(ax.get_yticklabels(), fontsize=15)
+    plt.xticks(rotation=90)
     fig.tight_layout()
     plt.show()
 
 
 def pairplot(data):
-    sb.pairplot(data,
-                hue="class",
-                palette="Set1",
-                diag_kind="hist",
-                corner=True)
+    g = sb.pairplot(data,
+                    hue="class",
+                    palette="Set1",
+                    diag_kind="hist",
+                    corner=True)
+    for ax in g.axes.flat:
+        if ax:
+            ax.set_xlabel(ax.get_xlabel(), fontsize=14)  # Set x-axis label size
+            ax.set_ylabel(ax.get_ylabel(), fontsize=14)  # Set y-axis label size
+    plt.show()
+
+
+def bar_pca(N, attributeNames, V):
+    pcs = range(N)
+    legendStrs = ["PC" + str(e + 1) for e in pcs]
+    bw = 0.2
+    r = np.arange(1, len(attributeNames) + 1)
+    fig = plt.figure(figsize=(10, 8))
+    for i in pcs:
+        plt.bar(r + i * bw, V[:, i], width=bw)
+    plt.xticks(r + bw, attributeNames)
+    plt.xlabel("Attributes")
+    plt.xticks(rotation=90)
+    plt.ylabel("Component coefficients")
+    plt.legend(legendStrs)
+    plt.grid()
+    fig.tight_layout()
     plt.show()
