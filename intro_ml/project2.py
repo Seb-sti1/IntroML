@@ -1,11 +1,12 @@
 import numpy as np
+from sklearn.linear_model import LogisticRegression
 
 from intro_ml.load_data import get_data
 from intro_ml.two_level_cross_validation import two_level_cross_val, Model
 
 
 def classification_error(y_predicted, y_test):
-    return len(np.argwhere(y_predicted == y_test)) / len(y_test)
+    return len(np.argwhere(y_predicted != y_test)) / len(y_test)
 
 
 class Baseline(Model):
@@ -32,12 +33,30 @@ class Baseline(Model):
                                     y_test)
 
 
+class MultinomialRegression(Model):
+    def __init__(self, l):
+        """
+        :param l: the regularization parameter
+        """
+        self.l = l
+        self.lr = LogisticRegression(C=1 / l, tol=0.1)
+
+    def train(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
+        self.lr.fit(X_train, y_train)
+
+    def test(self, X_test: np.ndarray, y_test: np.ndarray) -> float:
+        return classification_error(self.lr.predict(X_test), y_test)
+
+
 if __name__ == '__main__':
     wine_data = get_data()
     wine_data_np = wine_data.to_numpy()
     X, y = wine_data_np[:, 1:], wine_data_np[:, 0]
 
-    e_circumflex_gen, result = two_level_cross_val(X, y, 5, 5, [Baseline()])
+    models_mr = [MultinomialRegression(l) for l in [1, 2, 3, 4, 5]]
+    models_bl = [Baseline()]
+    models = [models_mr, models_bl]
+    e_circumflex_gen_list, result = two_level_cross_val(X, y, 5, 5, models)
 
     print(e_circumflex_gen)
     print(result)
