@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 
 from intro_ml.load_data import get_data
-from intro_ml.two_level_cross_validation import two_level_cross_val, Model
+from intro_ml.two_level_cross_validation import two_level_cross_val, Model, result_to_latex_table
 
 
 def classification_error(y_predicted, y_test):
@@ -23,6 +23,15 @@ class Baseline(Model):
     def __init__(self):
         self.predicted_class = None
 
+    def name(self) -> str:
+        return "Baseline"
+
+    def param_name(self) -> str:
+        return ""
+
+    def param_value(self) -> str:
+        return ""
+
     def train(self, _: np.ndarray, y_train: np.ndarray) -> None:
         possible_classes = np.unique(y_train)
         count = [len(np.argwhere(y_train == possible_class)) for possible_class in possible_classes]
@@ -41,6 +50,15 @@ class MultinomialRegression(Model):
         self.l = l
         self.lr = LogisticRegression(C=1 / l, tol=0.1)
 
+    def name(self) -> str:
+        return "Multinomial Regression"
+
+    def param_name(self) -> str:
+        return "\\lambda"
+
+    def param_value(self) -> str:
+        return str(self.l)
+
     def train(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
         self.lr.fit(X_train, y_train)
 
@@ -58,5 +76,5 @@ if __name__ == '__main__':
     models = [models_mr, models_bl]
     e_circumflex_gen_list, result = two_level_cross_val(X, y, 5, 5, models)
 
-    print(e_circumflex_gen)
-    print(result)
+    result_to_latex_table("Comparison of Multinomial Regression and Baseline",
+                          models, e_circumflex_gen_list, result)

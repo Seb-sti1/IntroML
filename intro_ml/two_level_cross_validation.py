@@ -5,6 +5,15 @@ from sklearn.model_selection import KFold
 
 
 class Model:
+    def name(self) -> str:
+        raise NotImplemented("The Model.name function needs to be implemented")
+
+    def param_name(self) -> str:
+        raise NotImplemented("The Model.param_name function needs to be implemented")
+
+    def param_value(self) -> str:
+        raise NotImplemented("The Model.param_value function needs to be implemented")
+
     def train(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
         raise NotImplemented("The Model.train function needs to be implemented")
 
@@ -71,3 +80,38 @@ def two_level_cross_val(X: np.ndarray, y: np.ndarray, K1: int, K2: int, models: 
             result[i, 2 * k + 1] = e_test_i
 
     return e_circumflex_gen_list, result
+
+
+def result_to_latex_table(title: str,
+                          models: list[list[Model]],
+                          e_circumflex_gen_list: np.ndarray,
+                          result: np.ndarray):
+    def format_param_name(raw_param_name: str) -> str:
+        return "" if raw_param_name == "" else ("$%s^{*}_i$" % raw_param_name)
+
+    print("\\begin{table}[!htbp]\\centering"
+          "\\begin{tabular}{*%dc}" % (2 * len(models) + 1))
+    print("\\toprule")
+    print(" & ".join(["Outer fold"] +
+                     ["\multicolumn{2}{c}{%s}" % models_to_compare[0].name()
+                      for models_to_compare in models]), end="\\\\\n")
+    print(" ".join(["\cmidrule(lr){%d-%d}" % (2 * (k + 1), 2 * (k + 1) + 1) for k in range(len(models))]))
+    print(" & ".join(["$i$"] +
+                     [format_param_name(models_to_compare[0].param_name()) + " & $E^{test}_i$"
+                      for models_to_compare in models]),
+          end="\\\\\n")
+    print("\\midrule")
+
+    for i in range(result.shape[0]):
+        print(" & ".join([str(i + 1)] +
+                         [f"{models_to_compare[int(result[i, 2 * k])].param_value()} & {result[i, 2 * k + 1]:.2f}"
+                          for k, models_to_compare in enumerate(models)]),
+              end="\\\\\n")
+    print("\\midrule")
+    print(" & ".join(["Ê$^{gen}$"] +
+                     ["\multicolumn{2}{c}{%.2f}" % e_circumflex_gen
+                      for e_circumflex_gen in e_circumflex_gen_list]),
+          end="\\\\\n")
+    print("\\bottomrule\\end{tabular}")
+    print("\caption{%s}" % title)
+    print("\\end{table}")
