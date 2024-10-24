@@ -66,14 +66,39 @@ class MultinomialRegression(Model):
         return classification_error(self.lr.predict(X_test), y_test)
 
 
+class KNN(Model):
+    def __init__(self, k):
+        """
+        :param k: the controlling parameter
+        """
+        self.k = k
+        self.knn = KNeighborsClassifier(n_neighbors=k)
+
+    def name(self) -> str:
+        return "$k$-nearest neighbor"
+
+    def param_name(self) -> str:
+        return "k"
+
+    def param_value(self) -> str:
+        return str(self.k)
+
+    def train(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
+        self.knn.fit(X_train, y_train)
+
+    def test(self, X_test: np.ndarray, y_test: np.ndarray) -> float:
+        return classification_error(self.knn.predict(X_test), y_test)
+
+
 if __name__ == '__main__':
     wine_data = get_data()
     wine_data_np = wine_data.to_numpy()
     X, y = wine_data_np[:, 1:], wine_data_np[:, 0]
 
     models_mr = [MultinomialRegression(l) for l in [1, 2, 3, 4, 5]]
+    models_knn = [KNN(k) for k in range(1, 11)]
     models_bl = [Baseline()]
-    models = [models_mr, models_bl]
+    models = [models_mr, models_knn, models_bl]
     e_circumflex_gen_list, result = two_level_cross_val(X, y, 5, 5, models)
 
     result_to_latex_table("Comparison of Multinomial Regression and Baseline",
