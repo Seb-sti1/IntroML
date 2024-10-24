@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 
 from intro_ml.load_data import get_data
 from intro_ml.two_level_cross_validation import two_level_cross_val, Model, result_to_latex_table
@@ -48,10 +49,13 @@ class MultinomialRegression(Model):
         :param l: the regularization parameter
         """
         self.l = l
-        self.lr = LogisticRegression(C=1 / l, tol=0.1)
+        # lbfgs solver is compatible with multinomial multiclass
+        # multi_class is deprecated and should be left at the default value
+        # https://scikit-learn.org/1.5/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression.fit
+        self.lr = LogisticRegression(solver='lbfgs', C=1 / l)
 
     def name(self) -> str:
-        return "Multinomial Regression"
+        return "Multinomial regression"
 
     def param_name(self) -> str:
         return "\\lambda"
@@ -92,14 +96,16 @@ class KNN(Model):
 
 if __name__ == '__main__':
     wine_data = get_data()
+
     wine_data_np = wine_data.to_numpy()
     X, y = wine_data_np[:, 1:], wine_data_np[:, 0]
+    X = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
 
-    models_mr = [MultinomialRegression(l) for l in [1, 2, 3, 4, 5]]
+    models_mr = [MultinomialRegression(l) for l in range(1, 5)]
     models_knn = [KNN(k) for k in range(1, 11)]
     models_bl = [Baseline()]
     models = [models_mr, models_knn, models_bl]
     e_circumflex_gen_list, result = two_level_cross_val(X, y, 5, 5, models)
 
-    result_to_latex_table("Comparison of Multinomial Regression and Baseline",
+    result_to_latex_table("Comparison of multinomial regression, method 2 and baseline",
                           models, e_circumflex_gen_list, result)
