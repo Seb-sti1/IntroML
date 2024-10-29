@@ -17,7 +17,7 @@ from intro_ml.plot import plot_val_error_v_lambdas, plot_generalization_train_va
 def classification_error(y_predicted, y_test):
     return len(np.argwhere(y_predicted != y_test)) / len(y_test)
 
-def normalize(data):
+def standardise(data):
     return (data - np.mean(data, axis=0)) / np.std(data, axis=0)
 
 # class linearRegression(Model):
@@ -151,7 +151,7 @@ if __name__ == '__main__':
 
     wine_data_np = wine_data.to_numpy()
     #winedata normalised
-    winedata_normalised = normalize(wine_data_np)
+    winedata_normalised = standardise(wine_data_np)
 
     # Separate features (X) and target (y)
     target_column = wine_data.columns.get_loc("Color intensity")
@@ -163,7 +163,7 @@ if __name__ == '__main__':
     X = np.concatenate((np.ones((X.shape[0], 1)), X), 1)
 
     #definition of lambdas for regularization?
-    lambdas = np.logspace(-7, 7, 14)  # Range from 0.0001 to 100
+    lambdas = np.logspace(-1, 1, 14)  # Range from 0.0001 to 100
 
     # K-Fold CV and Generalization Error Estimation
     K = 10  # Number of folds
