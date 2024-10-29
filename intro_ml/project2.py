@@ -2,8 +2,10 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 
+from intro_ml.classifier_compare import setup_ii, result_to_latex
 from intro_ml.load_data import get_data
-from intro_ml.two_level_cross_validation import two_level_cross_val, Model, result_to_latex_table
+from intro_ml.plot import plot_multinomial_regression_coef
+from intro_ml.two_level_cross_validation import Model, result_to_latex_table, two_level_cross_val
 
 
 def classification_error(y_predicted, y_test):
@@ -96,6 +98,8 @@ class KNN(Model):
 
 if __name__ == '__main__':
     wine_data = get_data()
+    wine_data_no_class = wine_data.drop("class", axis=1)
+    attributes = wine_data_no_class.columns
 
     wine_data_np = wine_data.to_numpy()
     X, y = wine_data_np[:, 1:], wine_data_np[:, 0]
@@ -109,3 +113,20 @@ if __name__ == '__main__':
 
     result_to_latex_table("Comparison of multinomial regression, $k$-nearest neighbor and baseline",
                           models, e_circumflex_gen_list, result)
+
+    a = 0.95
+    result_to_latex(*setup_ii(X, y, KNN(5), MultinomialRegression(10), alpha=a))
+    result_to_latex(*setup_ii(X, y, Baseline(), MultinomialRegression(10), alpha=a))
+    result_to_latex(*setup_ii(X, y, Baseline(), KNN(5), alpha=a))
+
+    mr = MultinomialRegression(10)
+    mr.train(X, y)
+
+    plot_multinomial_regression_coef(mr.lr.classes_, attributes,
+                                     mr.lr.coef_, mr.lr.intercept_)
+
+    # i = 130
+    # p = mr.lr.coef_ @ X[i, :] + mr.lr.intercept_
+    # print(p)
+    # print(mr.lr.predict_proba(X[i:i + 1, :]))
+    # print(y[i])

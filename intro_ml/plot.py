@@ -102,6 +102,23 @@ def plot_Vh(Vh, columns):
     plt.show()
 
 
+def plot_multinomial_regression_coef(classes: np.ndarray, columns: list[str],
+                                     coef: np.ndarray, intercept: np.ndarray):
+    fig = plt.figure(figsize=(12, 8))
+    data = np.concatenate((coef, intercept[:, np.newaxis]), axis=1)
+    extremum = abs(data).max() * 1.01
+    g = sb.heatmap(data, xticklabels=list(columns) + ["bias"],
+                   yticklabels=[f"Class {int(c)}" for c in classes],
+                   cmap='PRGn', annot=True, fmt='.2f',
+                   vmin=-extremum, vmax=extremum)
+    ax = g.axes
+    plt.setp(ax.get_xticklabels(), fontsize=15)
+    plt.setp(ax.get_yticklabels(), fontsize=15)
+    plt.xticks(rotation=90)
+    fig.tight_layout()
+    plt.show()
+
+
 def pairplot(data):
     g = sb.pairplot(data,
                     hue="class",
