@@ -104,12 +104,12 @@ def result_to_latex_table(title: str,
 
     for i in range(result.shape[0]):
         print(" & ".join([str(i + 1)] +
-                         [f"{models_to_compare[int(result[i, 2 * k])].param_value()} & {result[i, 2 * k + 1]:.2f}"
+                         [f"{models_to_compare[int(result[i, 2 * k])].param_value()} & {result[i, 2 * k + 1] * 100:.1f}"
                           for k, models_to_compare in enumerate(models)]),
               end="\\\\\n")
     print("\\midrule")
     print(" & ".join(["Ê$^{gen}$"] +
-                     ["\multicolumn{2}{c}{%.2f}" % e_circumflex_gen
+                     ["\multicolumn{2}{c}{%.1f}" % (e_circumflex_gen * 100)
                       for e_circumflex_gen in e_circumflex_gen_list]),
           end="\\\\\n")
     print("\\bottomrule\\end{tabular}")
