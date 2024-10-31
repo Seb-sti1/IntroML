@@ -151,11 +151,13 @@ def bar_pca(N, attributeNames, V):
 
 
 def plot_val_error_v_lambdas(lambdas, val_errors):
+    # Find the lambda with the lowest validation error
+    min_val_error = min(val_errors)
+    optimal_lambda = lambdas[val_errors.index(min_val_error)]
+
     plt.figure(figsize=(10, 6))
-    plt.loglog(lambdas, val_errors, label="Validation Error", marker='o')
-    # plt.plot(lambdas, val_errors, label="Validation Error (Generalization Error)", marker='o')
-    # plt.xscale('log')
-    # plt.yscale('log')
+    plt.loglog(lambdas, val_errors, label="Validation Error", marker='.', color='orangered')
+    plt.scatter(optimal_lambda, min_val_error, marker='x', color='red', s=100, zorder=5, label=f"Optimal λ = {optimal_lambda:.5g}")
     plt.xlabel("Regularization Parameter λ (log scale)")
     plt.ylabel("Mean Squared Error (MSE)")
     plt.title("Validation Error vs. Regularization Parameter λ in Ridge Regression")
@@ -166,8 +168,8 @@ def plot_val_error_v_lambdas(lambdas, val_errors):
 def plot_generalization_train_val_error_v_lambdas(lambdas, val_errors, train_errors):
     plt.figure(figsize=(10, 6))
     # plt.loglog(lambdas, val_errors, train_errors, label={"Validation Error","Training Error"}, marker='o')
-    plt.semilogx(lambdas, train_errors, label="Training Error", marker='o')
-    plt.semilogx(lambdas, val_errors, label="Validation Error (Generalization Error)", marker='o')
+    plt.semilogx(lambdas, train_errors, label="Training Error", marker='o', color='dodgerblue')
+    plt.semilogx(lambdas, val_errors, label="Validation Error", marker='o', color='orangered')
     plt.xscale('log')  # Log scale for λ for better visualization
     plt.yscale('log', base=10)
     plt.xlabel("Regularization Parameter λ (log scale)")

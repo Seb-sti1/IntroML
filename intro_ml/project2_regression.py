@@ -237,7 +237,7 @@ if __name__ == '__main__':
     X = np.concatenate((np.ones((X.shape[0], 1)), X), 1)
 
     #definition of lambdas for regularization?
-    lambdas = np.logspace(-1, 1, 14)  # Range from 0.0001 to 100
+    lambdas = np.logspace(-1, 1, 20)  # Range from 0.0001 to 100
 
     hidden_layer_sizes = range(1,20)  # Range from 1 to 20
 
@@ -245,7 +245,7 @@ if __name__ == '__main__':
     models_ann = [ANN(h) for h in hidden_layer_sizes]
     models_baseline = [BaselineRegression()]
     models = [models_rlr, models_ann, models_baseline]
-    e_circumflex_gen_list, result = two_level_cross_val(X, y, 2, 2, models)
+    e_circumflex_gen_list, result = two_level_cross_val(X, y, 10, 10, models)
 
     result_to_latex_table("Comparison of linear Ridge regression, ANN and baseline regression", models, e_circumflex_gen_list, result)
 
