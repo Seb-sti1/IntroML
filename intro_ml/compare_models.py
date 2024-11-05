@@ -19,15 +19,15 @@ def setup_ii(X: np.ndarray, y: np.ndarray,
     :param model_a: the model A
     :param model_b: the model B
     :param K: the number of fold, the pdf indicates to keep K low such that the test set is greater than 30 items
-    :param J: the number of repetition of the K-fold prediction
+    :param J:
     :param alpha: the confidence for the CI
     :return: r_circumflex, z_l, z_u, p
     """
     r_list = np.zeros(J)
 
-    for j in range(J):
+    for j in range(0, J, K):
         fold = KFold(K, shuffle=True)
-        for d_train, d_test in fold.split(X, y):
+        for k, (d_train, d_test) in enumerate(fold.split(X, y)):
             X_train = X[d_train]
             y_train = y[d_train]
             X_test = X[d_test]
@@ -41,7 +41,7 @@ def setup_ii(X: np.ndarray, y: np.ndarray,
             error_a = model_a.test(X_test, y_test)
             error_b = model_b.test(X_test, y_test)
 
-            r_list[j] += 1 / K * (error_a - error_b)
+            r_list[j + k] = error_a - error_b
 
     r_circumflex = 1 / J * r_list.sum()
     s_circumflex_squared = (r_list - r_circumflex).T @ (r_list - r_circumflex) / (J - 1)

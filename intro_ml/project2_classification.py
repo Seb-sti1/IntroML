@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 
-from intro_ml.classifier_compare import setup_ii, result_to_latex
+from intro_ml.compare_models import setup_ii, result_to_latex
 from intro_ml.load_data import get_data
 from intro_ml.plot import plot_multinomial_regression_coef
 from intro_ml.two_level_cross_validation import Model, result_to_latex_table, two_level_cross_val
