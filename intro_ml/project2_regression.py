@@ -8,7 +8,7 @@ from sklearn.linear_model import Ridge
 from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
 
-
+from intro_ml.compare_models import setup_ii, result_to_latex
 from intro_ml.load_data import get_data
 from intro_ml.two_level_cross_validation import two_level_cross_val, Model, result_to_latex_table
 from intro_ml.plot import plot_val_error_v_lambdas, plot_generalization_train_val_error_v_lambdas
@@ -20,17 +20,6 @@ def classification_error(y_predicted, y_test):
 def standardise(data):
     return (data - np.mean(data, axis=0)) / np.std(data, axis=0)
 
-# class linearRegression(Model):
-#
-#     def __init__(self, l):
-#
-#     def train(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
-#         self.lr.fit(X_train, y_train)
-#
-#     def test(self, X_test: np.ndarray, y_test: np.ndarray) -> float:
-#         return classification_error(self.lr.predict(X_test), y_test)
-#
-#
 
 class BaselineRegression(Model):
     """
@@ -59,45 +48,6 @@ class BaselineRegression(Model):
 
     def test(self, X_test: np.ndarray, y_test: np.ndarray) -> float:
         return mean_squared_error(self.predicted_mean * np.ones((len(X_test))), y_test)
-
-
-
-
-class Baseline(Model):
-    """
-    This implements the baseline model for the classification part
-
-    See project2.pdf page 6:
-    > The baseline will be a model which compute the largest class on the training
-    > data, and predict everything in the test-data as belonging to that class (corresponding
-    > to the optimal prediction by a logistic regression model with a bias
-    > term and no features).
-    """
-
-    def __init__(self):
-        def __init__(self, l):
-            """
-            :param l (lambda): the regularization parameter
-            """
-            self.l = l
-
-    def name(self) -> str:
-        return "Baseline"
-
-    def param_name(self) -> str:
-        return ""
-
-    def param_value(self) -> str:
-        return ""
-
-    def train(self, _: np.ndarray, y_train: np.ndarray) -> None:
-        possible_classes = np.unique(y_train)
-        count = [len(np.argwhere(y_train == possible_class)) for possible_class in possible_classes]
-        self.predicted_class = possible_classes[np.argmax(count)]
-
-    def test(self, X_test: np.ndarray, y_test: np.ndarray) -> float:
-        return classification_error(self.predicted_class * np.ones((len(X_test))),
-                                    y_test)
 
 
 class RidgeRegression(Model):
@@ -148,78 +98,6 @@ class ANN(Model):
         return mean_squared_error(self.ann.predict(X_test), y_test)
 
 
-class MultinomialRegression(Model):
-    def __init__(self, l):
-        """
-        :param l: the regularization parameter
-        """
-        self.l = l
-        # lbfgs solver is compatible with multinomial multiclass
-        # multi_class is deprecated and should be left at the default value
-        # https://scikit-learn.org/1.5/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression.fit
-        self.lr = LogisticRegression(solver='lbfgs', C=1 / l)
-
-    def name(self) -> str:
-        return "Multinomial regression"
-
-    def param_name(self) -> str:
-        return "\\lambda"
-
-    def param_value(self) -> str:
-        return str(self.l)
-
-    def train(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
-        self.lr.fit(X_train, y_train)
-
-    def test(self, X_test: np.ndarray, y_test: np.ndarray) -> float:
-        return classification_error(self.lr.predict(X_test), y_test)
-
-
-class KNN(Model):
-    def __init__(self, k):
-        """
-        :param k: the controlling parameter
-        """
-        self.k = k
-        self.knn = KNeighborsClassifier(n_neighbors=k)
-
-    def name(self) -> str:
-        return "$k$-nearest neighbor"
-
-    def param_name(self) -> str:
-        return "k"
-
-    def param_value(self) -> str:
-        return str(self.k)
-
-    def train(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
-        self.knn.fit(X_train, y_train)
-
-    def test(self, X_test: np.ndarray, y_test: np.ndarray) -> float:
-        return classification_error(self.knn.predict(X_test), y_test)
-
-
-class ClassificationTree(Model):
-    def __init__(self, d):
-        self.d = d
-        self.cf = DecisionTreeClassifier(criterion="gini", min_samples_split=d)
-
-    def name(self) -> str:
-        return "Classification tree"
-
-    def param_name(self) -> str:
-        return "d"  # TODO change this
-
-    def param_value(self) -> str:
-        return self.d
-
-    def train(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
-        self.cf.fit(X_train, y_train)
-
-    def test(self, X_test: np.ndarray, y_test: np.ndarray) -> float:
-        return classification_error(self.cf.predict(X_test), y_test)
-
-
 if __name__ == '__main__':
     wine_data = get_data()
 
@@ -248,6 +126,13 @@ if __name__ == '__main__':
     e_circumflex_gen_list, result = two_level_cross_val(X, y, 10, 10, models)
 
     result_to_latex_table("Comparison of linear Ridge regression, ANN and baseline regression", models, e_circumflex_gen_list, result)
+
+    a = 0.95
+    best_lambda = 2.5
+    best_h = 3
+    result_to_latex(*setup_ii(X, y, ANN(best_h), RidgeRegression(best_lambda), alpha=a, J=50))
+    result_to_latex(*setup_ii(X, y, BaselineRegression(), RidgeRegression(best_lambda), alpha=a, J=50))
+    result_to_latex(*setup_ii(X, y, BaselineRegression(), ANN(best_h), alpha=a, J=50))
 
 
 

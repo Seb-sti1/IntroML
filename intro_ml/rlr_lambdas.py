@@ -1,7 +1,7 @@
 import numpy as np
 
 
-from intro_ml.project2 import standardise
+from intro_ml.project2_regression import standardise
 from intro_ml.load_data import get_data
 from intro_ml.plot import plot_val_error_v_lambdas, plot_generalization_train_val_error_v_lambdas
 
@@ -27,7 +27,8 @@ X = np.concatenate((np.ones((X.shape[0], 1)), X), 1)
 
 #definition of lambdas for regularization?
 lambdas = np.logspace(-1, 1, 40)  # Range from 0.0001 to 100
-
+lambdas[0] = 1
+lambdas.sort()
 
 
 # K-Fold CV and Generalization Error Estimation

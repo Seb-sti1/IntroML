@@ -16,7 +16,7 @@ from matplotlib.pylab import (
 )
 from scipy.io import loadmat
 from sklearn import model_selection
-from intro_ml.project2 import standardise
+from intro_ml.project2_regression import standardise
 from intro_ml.load_data import get_data
 
 from dtuimldmtools import rlr_validate
