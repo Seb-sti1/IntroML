@@ -80,7 +80,7 @@ class ANN(Model):
         :param l: the regularization parameter
         """
         self.l = l
-        self.ann = MLPRegressor(hidden_layer_sizes=(l,), max_iter=1000)
+        self.ann = MLPRegressor(hidden_layer_sizes=(l,), max_iter=1000, batch_size=15)
 
     def name(self) -> str:
         return "Artificial Neural Network"
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     X = np.concatenate((np.ones((X.shape[0], 1)), X), 1)
 
     #definition of lambdas for regularization?
-    lambdas = np.logspace(-1, 1, 20)  # Range from 0.0001 to 100
+    lambdas = np.logspace(-5, 9, 20)  # Range from 0.0001 to 100
 
     hidden_layer_sizes = range(1,20)  # Range from 1 to 20
 
