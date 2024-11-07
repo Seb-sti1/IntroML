@@ -92,6 +92,7 @@ def result_to_latex_table(title: str,
     print("\\begin{table}[!htbp]\\centering"
           "\\begin{tabular}{*%dc}" % (2 * len(models) + 1))
     print("\\toprule")
+    print("\\toprule")
     print(" & ".join(["Outer fold"] +
                      ["\multicolumn{2}{c}{%s}" % models_to_compare[0].name()
                       for models_to_compare in models]), end="\\\\\n")
@@ -104,12 +105,12 @@ def result_to_latex_table(title: str,
 
     for i in range(result.shape[0]):
         print(" & ".join([str(i + 1)] +
-                         [f"{models_to_compare[int(result[i, 2 * k])].param_value()} & {result[i, 2 * k + 1] * 100:.1f}"
+                         [f"{models_to_compare[int(result[i, 2 * k])].param_value()} & {result[i, 2 * k + 1]:.2f}"
                           for k, models_to_compare in enumerate(models)]),
               end="\\\\\n")
     print("\\midrule")
     print(" & ".join(["Ê$^{gen}$"] +
-                     ["\multicolumn{2}{c}{%.1f}" % (e_circumflex_gen * 100)
+                     ["\multicolumn{2}{c}{%.2f}" % (e_circumflex_gen)
                       for e_circumflex_gen in e_circumflex_gen_list]),
           end="\\\\\n")
     print("\\bottomrule\\end{tabular}")
