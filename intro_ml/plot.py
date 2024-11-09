@@ -179,3 +179,40 @@ def plot_generalization_train_val_error_v_lambdas(lambdas, val_errors, train_err
     plt.grid(True)
     plt.show()
 
+
+def plot_weights_bar_chart(weights, attribute_names, title):
+    filtered_weights = weights[1:]
+    filtered_attribute_names = attribute_names[1:]
+
+    fig = plt.figure(figsize=(12, 8))
+    ax = fig.add_subplot(111)
+    bars = ax.bar(filtered_attribute_names, filtered_weights, color='dodgerblue')
+
+    for bar, weight in zip(bars, filtered_weights):
+        if weight < 0:
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height(),
+                f'{weight:.3f}',
+                ha='center',
+                va='top'
+            )
+        else:
+            ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height(),
+            f'{weight:.3f}',
+            ha='center',
+            va='bottom'
+        )
+
+    plt.xticks(rotation=45, fontsize=12, ha='right')
+    plt.xlabel("Attributes", fontsize=14)
+    plt.ylabel("Weight", fontsize=14)
+    plt.title(title, fontsize=16)
+    fig.tight_layout()
+    plt.show()
+
+
+
+

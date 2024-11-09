@@ -3,7 +3,7 @@ import numpy as np
 
 from intro_ml.project2_regression import standardise
 from intro_ml.load_data import get_data
-from intro_ml.plot import plot_val_error_v_lambdas, plot_generalization_train_val_error_v_lambdas
+from intro_ml.plot import plot_val_error_v_lambdas, plot_generalization_train_val_error_v_lambdas, plot_weights_bar_chart
 
 from sklearn.linear_model import Ridge
 from sklearn.model_selection import KFold
@@ -27,8 +27,8 @@ X = np.concatenate((np.ones((X.shape[0], 1)), X), 1)
 
 #definition of lambdas for regularization?
 lambdas = np.logspace(-1, 1, 40)  # Range from 0.0001 to 100
-lambdas[0] = 1
-lambdas.sort()
+# lambdas[0] = 1
+# lambdas.sort()
 
 
 # K-Fold CV and Generalization Error Estimation
@@ -71,7 +71,18 @@ for lam in lambdas:
     val_errors.append(avg_val_error)
 
 
-#Plot the generalization error as a function of λ
+optimal_lambda_index = np.argmin(val_errors)
+optimal_lambda = lambdas[optimal_lambda_index]
+print(f"Optimal lambda: {optimal_lambda}")
+
+optimal_model = Ridge(alpha=1.1659)
+optimal_model.fit(X, y)
+coef_weights = optimal_model.coef_
+
+
+#Plot the generalization error as a function of λ + the weights bar chart
 plot_val_error_v_lambdas(lambdas, val_errors)
 
 plot_generalization_train_val_error_v_lambdas(lambdas, val_errors, train_errors)
+
+plot_weights_bar_chart(coef_weights, wine_data.columns, f"Weights of the optimal model (\u03BB=1.1659) in Ridge Regression")
