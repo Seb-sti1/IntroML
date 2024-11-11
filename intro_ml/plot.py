@@ -181,8 +181,9 @@ def plot_generalization_train_val_error_v_lambdas(lambdas, val_errors, train_err
 
 
 def plot_weights_bar_chart(weights, attribute_names, title):
-    filtered_weights = weights[1:]
-    filtered_attribute_names = attribute_names[1:]
+    # Exclude the first element and filter out "Color intensity"
+    filtered_weights = [weight for name, weight in zip(attribute_names[1:], weights[1:]) if name != "Color intensity"]
+    filtered_attribute_names = [name for name in attribute_names[1:] if name != "Color intensity"]
 
     fig = plt.figure(figsize=(12, 8))
     ax = fig.add_subplot(111)
@@ -206,10 +207,10 @@ def plot_weights_bar_chart(weights, attribute_names, title):
             va='bottom'
         )
 
-    plt.xticks(rotation=45, fontsize=12, ha='right')
-    plt.xlabel("Attributes", fontsize=14)
-    plt.ylabel("Weight", fontsize=14)
-    plt.title(title, fontsize=16)
+    plt.xticks(rotation=45, fontsize=14, ha='right')
+    plt.xlabel("Attributes", fontsize=16)
+    plt.ylabel("Weight", fontsize=16)
+    plt.title(title, fontsize=18)
     fig.tight_layout()
     plt.show()
 

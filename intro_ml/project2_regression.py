@@ -134,6 +134,9 @@ if __name__ == '__main__':
     result_to_latex(*setup_ii(X, y, BaselineRegression(), RidgeRegression(best_lambda), alpha=a, J=50))
     result_to_latex(*setup_ii(X, y, BaselineRegression(), ANN(best_h), alpha=a, J=50))
 
+    #print("TEST TO SEE DIFFERENCE BETWEEN ANN with different h_i")
+    #result_to_latex(*setup_ii(X, y, ANN(12), ANN(2), alpha=a, J=50))
+
 
 
 
