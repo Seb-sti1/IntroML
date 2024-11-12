@@ -78,6 +78,11 @@ print(f"Optimal lambda: {optimal_lambda}")
 optimal_model = Ridge(alpha=1.1659)
 optimal_model.fit(X, y)
 coef_weights = optimal_model.coef_
+bias_term = optimal_model.intercept_
+
+coef_weights = [bias_term] + list(coef_weights)
+attribute_names = ["Bias"] + list(wine_data.columns)
+
 
 
 #Plot the generalization error as a function of λ + the weights bar chart
@@ -85,4 +90,4 @@ plot_val_error_v_lambdas(lambdas, val_errors)
 
 plot_generalization_train_val_error_v_lambdas(lambdas, val_errors, train_errors)
 
-plot_weights_bar_chart(coef_weights, wine_data.columns, f"Weights of the optimal model (\u03BB=1.1659) in Ridge Regression")
+plot_weights_bar_chart(coef_weights, attribute_names, f"Weights of the optimal model (\u03BB=1.1659) in Ridge Regression")

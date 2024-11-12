@@ -182,8 +182,12 @@ def plot_generalization_train_val_error_v_lambdas(lambdas, val_errors, train_err
 
 def plot_weights_bar_chart(weights, attribute_names, title):
     # Exclude the first element and filter out "Color intensity"
-    filtered_weights = [weight for name, weight in zip(attribute_names[1:], weights[1:]) if name != "Color intensity"]
-    filtered_attribute_names = [name for name in attribute_names[1:] if name != "Color intensity"]
+    filtered_weights = [
+        weight for name, weight in zip(attribute_names, weights) if name not in ["Color intensity", "class"]
+    ]
+    filtered_attribute_names = [
+        name for name in attribute_names if name not in ["Color intensity", "class"]
+    ]
 
     fig = plt.figure(figsize=(12, 8))
     ax = fig.add_subplot(111)
