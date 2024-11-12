@@ -26,7 +26,8 @@ X = np.delete(winedata_normalised, target_column, axis=1)
 X = np.concatenate((np.ones((X.shape[0], 1)), X), 1)
 
 #definition of lambdas for regularization?
-lambdas = np.logspace(-1, 1, 40)  # Range from 0.0001 to 100
+# lambdas = np.logspace(-1, 1, 16)  # Range from 0.0001 to 100
+lambdas = np.logspace(-5, 9, 40)
 # lambdas[0] = 1
 # lambdas.sort()
 
