@@ -115,18 +115,12 @@ if __name__ == '__main__':
                           models, e_circumflex_gen_list, result)
 
     a = 0.95
-    result_to_latex(*setup_ii(X, y, KNN(5), MultinomialRegression(10), alpha=a))
-    result_to_latex(*setup_ii(X, y, Baseline(), MultinomialRegression(10), alpha=a))
-    result_to_latex(*setup_ii(X, y, Baseline(), KNN(5), alpha=a))
+    result_to_latex(*setup_ii(X, y, KNN(5), MultinomialRegression(10), alpha=a, J=50))
+    result_to_latex(*setup_ii(X, y, Baseline(), MultinomialRegression(10), alpha=a, J=50))
+    result_to_latex(*setup_ii(X, y, Baseline(), KNN(5), alpha=a, J=50))
 
     mr = MultinomialRegression(10)
     mr.train(X, y)
 
     plot_multinomial_regression_coef(mr.lr.classes_, attributes,
                                      mr.lr.coef_, mr.lr.intercept_)
-
-    # i = 130
-    # p = mr.lr.coef_ @ X[i, :] + mr.lr.intercept_
-    # print(p)
-    # print(mr.lr.predict_proba(X[i:i + 1, :]))
-    # print(y[i])

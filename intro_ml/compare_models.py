@@ -9,7 +9,7 @@ from intro_ml.two_level_cross_validation import Model
 
 def setup_ii(X: np.ndarray, y: np.ndarray,
              model_a: Model, model_b: Model,
-             K: int = 5, J: int = 200,
+             K: int = 5, J: int = 20,
              alpha=0.95) -> tp.Tuple[float, float, float, float]:
     """
     Method described in box 11.4.1

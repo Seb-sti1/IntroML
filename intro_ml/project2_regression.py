@@ -1,21 +1,16 @@
 import numpy as np
-from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neural_network import MLPRegressor
-
 from sklearn.linear_model import Ridge
-from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
+from sklearn.neural_network import MLPRegressor
 
 from intro_ml.compare_models import setup_ii, result_to_latex
 from intro_ml.load_data import get_data
 from intro_ml.two_level_cross_validation import two_level_cross_val, Model, result_to_latex_table
-from intro_ml.plot import plot_val_error_v_lambdas, plot_generalization_train_val_error_v_lambdas
 
 
 def classification_error(y_predicted, y_test):
     return len(np.argwhere(y_predicted != y_test)) / len(y_test)
+
 
 def standardise(data):
     return (data - np.mean(data, axis=0)) / np.std(data, axis=0)
@@ -25,7 +20,7 @@ class BaselineRegression(Model):
     """
     This implements the baseline model for the regression part
 
-    See project2.pdf page 6:
+    See project2.pdf page 4:
     > The baseline will be a model which compute the mean of the training data, and predict
     > everything in the test-data as the mean (corresponding to the optimal prediction by a linear
     > regression model with a bias term and no features).
@@ -102,7 +97,7 @@ if __name__ == '__main__':
     wine_data = get_data()
 
     wine_data_np = wine_data.to_numpy()
-    #winedata normalised
+    # winedata normalised
     winedata_normalised = standardise(wine_data_np)
 
     # Separate features (X) and target (y)
@@ -114,10 +109,10 @@ if __name__ == '__main__':
     # Add offset attribute
     X = np.concatenate((np.ones((X.shape[0], 1)), X), 1)
 
-    #definition of lambdas for regularization?
+    # definition of lambdas for regularization?
     lambdas = np.logspace(-5, 9, 20)  # Range from 0.0001 to 100
 
-    hidden_layer_sizes = range(1,20)  # Range from 1 to 20
+    hidden_layer_sizes = range(1, 20)  # Range from 1 to 20
 
     models_rlr = [RidgeRegression(l) for l in lambdas]
     models_ann = [ANN(h) for h in hidden_layer_sizes]
@@ -125,7 +120,8 @@ if __name__ == '__main__':
     models = [models_rlr, models_ann, models_baseline]
     e_circumflex_gen_list, result = two_level_cross_val(X, y, 10, 10, models)
 
-    result_to_latex_table("Comparison of linear Ridge regression, ANN and baseline regression", models, e_circumflex_gen_list, result)
+    result_to_latex_table("Comparison of linear Ridge regression, ANN and baseline regression", models,
+                          e_circumflex_gen_list, result)
 
     a = 0.95
     best_lambda = 2.5
@@ -133,56 +129,3 @@ if __name__ == '__main__':
     result_to_latex(*setup_ii(X, y, ANN(best_h), RidgeRegression(best_lambda), alpha=a, J=50))
     result_to_latex(*setup_ii(X, y, BaselineRegression(), RidgeRegression(best_lambda), alpha=a, J=50))
     result_to_latex(*setup_ii(X, y, BaselineRegression(), ANN(best_h), alpha=a, J=50))
-
-    #print("TEST TO SEE DIFFERENCE BETWEEN ANN with different h_i")
-    #result_to_latex(*setup_ii(X, y, ANN(12), ANN(2), alpha=a, J=50))
-
-
-
-
-
-    # # K-Fold CV and Generalization Error Estimation
-    # K = 10  # Number of folds
-    # kf = KFold(n_splits=K, shuffle=True, random_state=2)
-    #
-    #
-    # # Placeholders to store errors for each λ
-    # train_errors = []
-    # val_errors = []
-    #
-    # # Iterate over each λ value
-    # for lam in lambdas:
-    #     fold_train_errors = []
-    #     fold_val_errors = []
-    #
-    #     # Perform K-fold cross-validation
-    #     for train_index, val_index in kf.split(X):
-    #         X_train, X_val = X[train_index], X[val_index]
-    #         y_train, y_val = y[train_index], y[val_index]
-    #
-    #         # Apply Ridge Regression with the current λ as the regularization parameter
-    #         model = Ridge(alpha=lam)
-    #         model.fit(X_train, y_train)
-    #
-    #         # Predict on the validation and training sets and compute MSE
-    #         y_train_pred = model.predict(X_train)
-    #         y_val_pred = model.predict(X_val)
-    #
-    #         # Calculate errors for the current fold
-    #         fold_train_errors.append(mean_squared_error(y_train, y_train_pred))
-    #         fold_val_errors.append(mean_squared_error(y_val, y_val_pred))
-    #
-    #     # Average the MSE over all folds for the current λ
-    #     avg_train_error = np.mean(fold_train_errors)
-    #     avg_val_error = np.mean(fold_val_errors)
-    #
-    #     # Store the errors
-    #     train_errors.append(avg_train_error)
-    #     val_errors.append(avg_val_error)
-
-
-
-    # Plot the generalization error as a function of λ
-    # plot_val_error_v_lambdas(lambdas, val_errors)
-    #
-    # plot_generalization_train_val_error_v_lambdas(lambdas, val_errors, train_errors)
